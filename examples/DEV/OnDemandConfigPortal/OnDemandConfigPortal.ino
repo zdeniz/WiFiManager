@@ -60,7 +60,7 @@ void print_oled(String str,uint8_t size){
 }
 
 WiFiManager wm;
-bool TEST_CP  = false; // always start the configportal
+bool TEST_CP  = true; // always start the configportal
 bool TEST_NET = true; // do a network test, get ntp time
 char ssid[] = "*************";  //  your network SSID (name)
 char pass[] = "********";       // your network password
@@ -173,7 +173,7 @@ void setup() {
   wm.setCountry("US"); // setting wifi country seems to improve OSX soft ap connectivity, may help others as well
   
   // set channel
-  wm.setWiFiAPChannel(13);
+  // wm.setWiFiAPChannel(13);
   
   // set AP hidden
   // wm.setAPHidden(true);

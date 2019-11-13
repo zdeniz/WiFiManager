@@ -2431,6 +2431,16 @@ String WiFiManager::getWiFiPass(bool persistent){
   return WiFi_psk(persistent);
 } 
 
+size_t WiFiManager::getTotalAvailableMemory() {
+  umm_info(0, 0);
+  return ummHeapInfo.freeBlocks * block_size;
+}
+
+size_t WiFiManager::getLargestAvailableBlock() {
+  umm_info(0, 0);
+  return ummHeapInfo.maxFreeContiguousBlocks * block_size;
+}
+
 // DEBUG
 // @todo fix DEBUG_WM(0,0);
 template <typename Generic>
@@ -2453,8 +2463,11 @@ void WiFiManager::DEBUG_WM(wm_debuglevel_t level,Generic text,Genericb textb) {
   if(!_debug || _debugLevel < level) return;
 
   if(_debugLevel >= DEBUG_MAX){
-    _debugPort.print("MEM: ");
-    _debugPort.println((String)ESP.getFreeHeap());
+    _debugPort.println("MEM: ");
+    _debugPort.println((String)getTotalAvailableMemory());
+    _debugPort.println((String)getLargestAvailableBlock());
+    _debugPort.println((String)getFragmentation());
+    _debugPort.println((String)ESP.getFreeHeap()); // system_get_free_heap_size
   }
   _debugPort.print("*WM: ");
   if(_debugLevel == DEBUG_DEV) _debugPort.print("["+(String)level+"] ");

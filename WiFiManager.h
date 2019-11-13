@@ -16,6 +16,9 @@
 
 #if defined(ESP8266) || defined(ESP32)
 
+
+#include <umm_malloc/umm_malloc.h>
+
 #ifdef ESP8266
 #include <core_version.h>
 #endif
@@ -490,7 +493,7 @@ class WiFiManager
     } wm_debuglevel_t;
 
     boolean       _debug              = true;
-    uint8_t       _debugLevel         = DEBUG_DEV;
+    uint8_t       _debugLevel         = DEBUG_MAX;
     Stream&     _debugPort; // debug output stream ref
     
     template <typename Generic>
@@ -520,6 +523,28 @@ class WiFiManager
       // DEBUG_WM("NO fromString METHOD ON IPAddress, you need ESP8266 core 2.1.0 or newer for Custom IP configuration to work.");
       return false;
     }
+
+
+// C++ for Arduino
+// What is heap fragmentation?
+// https://cpp4arduino.com/
+
+// This source file captures the platform dependent code.
+// This version was tested with ESP8266 core for Arduino version 2.4.2
+
+// Returns the number of free bytes in the RAM.
+size_t getTotalAvailableMemory();
+
+// Returns the size of the largest allocable block of RAM.
+size_t getLargestAvailableBlock();
+
+const size_t block_size = 8;
+
+// Computes the heap fragmentation percentage.
+inline float getFragmentation() {
+  return 100 - getLargestAvailableBlock() * 100.0 / getTotalAvailableMemory();
+}
+
 };
 
 #endif
