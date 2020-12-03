@@ -14,6 +14,8 @@
 #ifndef WiFiManager_h
 #define WiFiManager_h
 
+#define WM_NODEBUG
+
 #if defined(ESP8266) || defined(ESP32)
 
 #ifdef ESP8266
