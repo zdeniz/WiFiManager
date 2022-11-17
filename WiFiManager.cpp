@@ -149,8 +149,9 @@ void WiFiManager::setupConfigPortal() {
   server->on(String(F("/wifisave")).c_str(), std::bind(&WiFiManager::handleWifiSave, this));
   server->on(String(F("/i")).c_str(), std::bind(&WiFiManager::handleInfo, this));
   server->on(String(F("/r")).c_str(), std::bind(&WiFiManager::handleReset, this));
-  //server->on("/generate_204", std::bind(&WiFiManager::handle204, this));  //Android/Chrome OS captive portal check.
+  server->on("/generate_204", std::bind(&WiFiManager::handle204, this));  //Android/Chrome OS captive portal check.
   server->on(String(F("/fwlink")).c_str(), std::bind(&WiFiManager::handleRoot, this));  //Microsoft captive portal. Maybe not needed. Might be handled by notFound handler.
+  server->on(String(F("/hotspot-detect.html")).c_str(), std::bind(&WiFiManager::handleApple, this));
   server->onNotFound (std::bind(&WiFiManager::handleNotFound, this));
   server->begin(); // Web server start
   DEBUG_WM(F("HTTP server started"));
@@ -466,6 +467,29 @@ void WiFiManager::handleRoot() {
   server->sendHeader("Content-Length", String(page.length()));
   server->send(200, "text/html", page);
 
+}
+
+/** Handle root or redirect to captive portal */
+void WiFiManager::handleApple() {
+  DEBUG_WM(F("Handle Apple"));
+  // if (captivePortal()) { // If caprive portal redirect instead of displaying the page.
+  //   return;
+  // }
+
+  String page = F("<HTML><HEAD><TITLE>Success</TITLE></HEAD><BODY>Success</BODY></HTML>");
+
+  server->sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  server->sendHeader("Pragma", "no-cache");
+  server->sendHeader("Expires", "-1");
+  server->send(200, "text/html", page);
+}
+
+void WiFiManager::handle204(){
+  DEBUG_WM(F("Handle Google"));
+    if (captivePortal()) { // If caprive portal redirect instead of displaying the page.
+    return;
+  }
+  this->handleRoot();
 }
 
 /** Wifi config page handler */

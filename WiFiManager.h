@@ -167,6 +167,7 @@ class WiFiManager
     void          handleReset();
     void          handleNotFound();
     void          handle204();
+    void          handleApple();
     boolean       captivePortal();
     boolean       configPortalHasTimeout();
 
